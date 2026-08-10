@@ -13,7 +13,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// --- 🗺️ 디테일이 강화된 도도부현 고해상도 좌표 데이터셋 ---
+// --- 🗺️ 올바른 다각형 좌표를 가진 도도부현 데이터셋 ---
 const rawDB = [
   { id: 1, ko: "홋카이도", jp: "北海道", region: "홋카이도 지방", specialty: "게, 유제품", spot: "삿포로 오도리 공원", coords: "140.2,41.4 139.8,41.6 139.3,42.0 139.1,42.3 139.5,42.8 140.1,42.7 140.8,42.4 141.5,43.2 140.5,43.6 139.3,44.1 139.8,44.9 140.8,45.4 141.8,45.5 142.8,45.4 145.0,45.3 145.9,45.1 145.2,44.2 145.5,43.7 145.6,43.0 143.8,43.1 142.5,42.4 143.1,41.4 141.8,41.5 140.5,41.4 140.2,41.4" },
   { id: 2, ko: "아오모리현", jp: "青森県", region: "도호쿠 지방", specialty: "사과", spot: "히로사키 성", coords: "139.5,41.0 139.7,41.3 140.0,41.5 140.3,41.2 140.5,41.4 140.8,41.5 141.3,41.4 141.6,41.2 141.5,40.8 141.7,40.5 141.3,40.3 140.8,40.4 140.4,40.3 140.0,40.5 139.8,40.6 139.6,40.8 139.5,41.0" },
@@ -64,12 +64,18 @@ const rawDB = [
   { id: 47, ko: "오키나와현", jp: "沖縄県", region: "오키나와 지방", specialty: "바다포도", spot: "츄라우미", coords: "127.6,26.1 127.8,26.3 128.0,26.6 128.3,26.8 128.1,26.9 127.9,26.6 127.7,26.3 127.6,26.1" }
 ];
 
+// --- 🌐 전체 일본 지도를 하나의 기준 좌표계(전체 경도/위도 범위)로 통일하여 개별 현들을 렌더링하도록 수정 ---
+const GLOBAL_MIN_LNG = 127.0;
+const GLOBAL_MAX_LNG = 146.5;
+const GLOBAL_MIN_LAT = 25.5;
+const GLOBAL_MAX_LAT = 46.0;
+
 const PREFECTURE_DB = rawDB.map(p => ({
   ...p,
   geojson: { type: "Polygon", coordinates: [p.coords.split(' ').map(c => c.split(',').map(Number))] }
 }));
 
-// --- 🎨 UI 및 레이아웃 스타일 ---
+// --- 🎨 UI 스타일 적용 ---
 const layoutFixStyle = document.createElement('style');
 layoutFixStyle.innerHTML = `
   body { font-family: 'Segoe UI', sans-serif; background-color: #FDFBF7; margin: 0; padding: 20px; display: flex; justify-content: center; }
@@ -102,7 +108,7 @@ learningSection.innerHTML = `
       <p style="margin:6px 0;"><strong>📸 관광지:</strong> <span id="learnSpot"></span></p>
     </div>
   </div>
-  <button id="backToSetupFromLearning" class="btn-action btn-home" style="margin-top:20px; width:100%;">🏠 홈으로 돌아가기</button>
+  <button id="backToSetupFromLearning" class="btn-action btn-home" style="margin-top:20px; width:100%;">🏠 메인으로 돌아가기</button>
 `;
 document.body.appendChild(learningSection);
 
@@ -117,23 +123,41 @@ const ui = {
 
 function show(name) { Object.values(ui).forEach(div => div?.classList.add('hidden')); ui[name]?.classList.remove('hidden'); }
 
-// 버튼 위치: [퀴즈 시작하기] 밑에 [일본 전도 학습하기] 생성
+// --- 🔄 버튼 순서 강제 재배치 ([시작하기] -> [일본 전도 학습하기] -> [로그아웃]) ---
 const startBtn = document.getElementById('startQuizBtn');
+const logoutBtn = document.getElementById('logoutBtn');
+
 if (startBtn) {
+  const existingLearn = document.getElementById('customLearnBtn');
+  if (existingLearn) existingLearn.remove();
+
   const learnBtn = document.createElement('button');
+  learnBtn.id = 'customLearnBtn';
   learnBtn.className = 'btn-primary';
   learnBtn.textContent = '🗺️ 일본 전도 학습하기';
-  learnBtn.style.cssText = 'background:#523543; color:#fff; padding:12px; border-radius:8px; border:none; font-weight:bold; cursor:pointer; width:100%; margin-top:10px;';
+  learnBtn.style.cssText = 'background:#523543; color:#fff; padding:12px; border-radius:8px; border:none; font-weight:bold; cursor:pointer; width:100%; margin-top:10px; display:block;';
   learnBtn.onclick = () => { show('learning'); drawJapanMap(); };
-  
+
   startBtn.parentNode.insertBefore(learnBtn, startBtn.nextSibling);
+
+  if (logoutBtn) {
+    logoutBtn.style.display = 'block';
+    logoutBtn.style.width = '100%';
+    logoutBtn.style.marginTop = '10px';
+    learnBtn.parentNode.insertBefore(logoutBtn, learnBtn.nextSibling);
+  }
 }
 
 document.getElementById('backToSetupFromLearning').onclick = () => show('setup');
 onAuthStateChanged(auth, (user) => { if (user) show('setup'); else show('login'); });
 
-// --- 🌐 좌표 보정 투영 계산식 ---
-function projectCoords(lng, lat, minLng, maxLng, minLat, maxLat, width, height, padding = 30) {
+// --- 🌐 전체 공통 좌표 투영 계산식 (지도가 찌그러지지 않도록 고정 비율 적용) ---
+function projectCoords(lng, lat, width, height, padding = 20) {
+  const minLng = GLOBAL_MIN_LNG;
+  const maxLng = GLOBAL_MAX_LNG;
+  const minLat = GLOBAL_MIN_LAT;
+  const maxLat = GLOBAL_MAX_LAT;
+
   const avgLatRad = ((minLat + maxLat) / 2) * (Math.PI / 180);
   const cosLat = Math.cos(avgLatRad);
 
@@ -162,18 +186,10 @@ function drawJapanMap() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   mapPaths = [];
 
-  let minLng = Infinity, maxLng = -Infinity, minLat = Infinity, maxLat = -Infinity;
-  PREFECTURE_DB.forEach(pref => {
-    pref.geojson.coordinates[0].forEach(([lng, lat]) => {
-      if (lng < minLng) minLng = lng; if (lng > maxLng) maxLng = lng;
-      if (lat < minLat) minLat = lat; if (lat > maxLat) maxLat = lat;
-    });
-  });
-
   PREFECTURE_DB.forEach(pref => {
     const path = new Path2D();
     const pts = pref.geojson.coordinates[0].map(([lng, lat]) => 
-      projectCoords(lng, lat, minLng, maxLng, minLat, maxLat, canvas.width, canvas.height, 15)
+      projectCoords(lng, lat, canvas.width, canvas.height, 15)
     );
 
     path.moveTo(pts[0][0], pts[0][1]);
@@ -213,7 +229,7 @@ function drawJapanMap() {
   };
 }
 
-// --- 🎯 개별 퀴즈 지도 렌더링 ---
+// --- 🎯 개별 퀴즈 지도 렌더링 (해당 현의 영역에 맞게 확대 표시) ---
 function renderGeoJsonPolygon(canvas, geojson) {
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -226,7 +242,25 @@ function renderGeoJsonPolygon(canvas, geojson) {
     if (lat < minLat) minLat = lat; if (lat > maxLat) maxLat = lat;
   });
 
-  const pts = ptsArr.map(([lng, lat]) => projectCoords(lng, lat, minLng, maxLng, minLat, maxLat, canvas.width, canvas.height, 35));
+  // 개별 퀴즈 화면에서는 해당 현의 바운딩 박스 기준으로 맞춤 투영
+  function projectLocal(lng, lat) {
+    const avgLatRad = ((minLat + maxLat) / 2) * (Math.PI / 180);
+    const cosLat = Math.cos(avgLatRad);
+    const mapW = (maxLng - minLng) * cosLat || 0.1;
+    const mapH = (maxLat - minLat) || 0.1;
+    const padding = 35;
+    const drawW = canvas.width - padding * 2;
+    const drawH = canvas.height - padding * 2;
+    const scale = Math.min(drawW / mapW, drawH / mapH);
+    const offsetX = padding + (drawW - mapW * scale) / 2;
+    const offsetY = padding + (drawH - mapH * scale) / 2;
+
+    const x = offsetX + (lng - minLng) * cosLat * scale;
+    const y = canvas.height - (offsetY + (lat - minLat) * scale);
+    return [x, y];
+  }
+
+  const pts = ptsArr.map(([lng, lat]) => projectLocal(lng, lat));
 
   ctx.beginPath();
   ctx.moveTo(pts[0][0], pts[0][1]);
