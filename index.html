@@ -12,7 +12,7 @@
     <div id="loginSection">
       <h1>🗾 japan quiz</h1>
       <p style="font-size: 0.85rem; color: #555; margin-bottom: 20px;">
-        일본 도도부현 지리 지식 퀴즈 서비스
+        일본 도도부현 지도 학습 퀴즈 서비스
       </p>
 
       <form id="loginForm">
@@ -46,11 +46,25 @@
       <p class="toggle-text">이미 계정이 있으신가요? <a href="#" id="toLogin">로그인</a></p>
     </div>
 
+    <div id="modeSection" class="hidden">
+      <h1>🌐 언어 모드 선택</h1>
+      <p>풀고 싶은 퀴즈의 언어를 선택해 주세요.</p>
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button id="langKoBtn" class="btn-primary" style="flex: 1;">🇰🇷 한국어 버전</button>
+        <button id="langJpBtn" class="btn-primary" style="flex: 1;">🇯🇵 日本語 バージョン</button>
+      </div>
+    </div>
+
     <div id="quizSection" class="hidden">
       <div class="quiz-header">문제 <span id="currentNum">1</span> / <span id="totalNum">3</span></div>
-      <div class="question" id="questionText">문제가 여기에 표시됩니다.</div>
-      <div class="options" id="optionsContainer">
-        </div>
+      
+      <div class="map-container" style="text-align: center; margin: 15px 0;">
+        <img id="mapImage" src="" alt="일본 지도 위치" style="max-width: 100%; height: 180px; object-fit: contain; border-radius: 8px; border: 1px solid #ddd;">
+      </div>
+
+      <div class="question" id="questionText">표시된 지역은 어디일까요?</div>
+      
+      <div class="options" id="optionsContainer"></div>
     </div>
   </div>
 
