@@ -27,7 +27,6 @@ body {
   display: none;
 }
 
-/* 로그인 스타일 */
 .card h1 {
   font-size: 1.6rem;
   color: #333;
@@ -80,6 +79,17 @@ body {
 
 .btn-primary:hover {
   background-color: #357abd;
+}
+
+.toggle-text {
+  margin-top: 16px;
+  font-size: 0.85rem !important;
+}
+
+.toggle-text a {
+  color: #4a90e2;
+  text-decoration: none;
+  font-weight: bold;
 }
 
 /* 퀴즈 스타일 */
