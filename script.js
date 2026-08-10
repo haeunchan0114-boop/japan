@@ -1,4 +1,24 @@
-// 1. 퀴즈 데이터 (필요 시 문제 항목을 자유롭게 추가하세요)
+// --- 1. 로그인 로직 ---
+const loginForm = document.getElementById('loginForm');
+const loginSection = document.getElementById('loginSection');
+const quizSection = document.getElementById('quizSection');
+
+loginForm.addEventListener('submit', function(event) {
+  event.preventDefault();
+  
+  const username = document.getElementById('username').value;
+  alert(`${username}님, 환영합니다! 퀴즈를 시작합니다.`);
+  
+  // 로그인 화면 숨기고 퀴즈 화면 보여주기
+  loginSection.classList.add('hidden');
+  quizSection.classList.remove('hidden');
+  
+  // 첫 문제 로드
+  loadQuiz();
+});
+
+
+// --- 2. 퀴즈 데이터 및 로직 ---
 const quizData = [
   {
     question: "일본의 수도가 위치한 도도부현은 어디일까요?",
@@ -20,17 +40,13 @@ const quizData = [
 let currentIdx = 0;
 let score = 0;
 
-// HTML 요소 가져오기
 const questionText = document.getElementById('questionText');
 const optionsContainer = document.getElementById('optionsContainer');
 const currentNum = document.getElementById('currentNum');
 const totalNum = document.getElementById('totalNum');
-const quizContainer = document.getElementById('quizContainer');
 
-// 총 문제 수 표시
 totalNum.innerText = quizData.length;
 
-// 문제 불러오기 함수
 function loadQuiz() {
   const currentQuiz = quizData[currentIdx];
   currentNum.innerText = currentIdx + 1;
@@ -46,7 +62,6 @@ function loadQuiz() {
   });
 }
 
-// 정답 확인 함수
 function checkAnswer(selectedIdx) {
   if (selectedIdx === quizData[currentIdx].answer) {
     score++;
@@ -64,16 +79,12 @@ function checkAnswer(selectedIdx) {
   }
 }
 
-// 결과 출력 함수
 function showResult() {
-  quizContainer.innerHTML = `
+  quizSection.innerHTML = `
     <div class="score-box">
       <h2>퀴즈 완료! 👏</h2>
-      <p style="margin-top: 15px;">총 ${quizData.length}문제 중 <strong>${score}</strong>문제를 맞추셨습니다!</p>
-      <button class="btn-primary" onclick="location.reload()">다시 풀기</button>
+      <p style="margin: 15px 0;">총 ${quizData.length}문제 중 <strong>${score}</strong>문제를 맞추셨습니다!</p>
+      <button class="btn-primary" onclick="location.reload()">처음으로 돌아가기</button>
     </div>
   `;
 }
-
-// 최초 실행
-loadQuiz();
