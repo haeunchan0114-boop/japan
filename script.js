@@ -74,11 +74,12 @@ const PREFECTURE_DB = rawDB.map(p => ({
   geojson: { type: "Polygon", coordinates: [p.coords.split(' ').map(c => c.split(',').map(Number))] }
 }));
 
-// --- 🎨 스타일 정의 (하얀색 불필요 정보창 레이아웃 제거) ---
+// --- 🎨 스타일 정의 (왼쪽 빈 네모 박스 원인인 flex/container 구조 및 레이아웃 오류 완전 수정) ---
 const layoutFixStyle = document.createElement('style');
 layoutFixStyle.innerHTML = `
-  body { font-family: 'Segoe UI', sans-serif; background-color: #FDFBF7; margin: 0; padding: 20px; display: flex; justify-content: center; }
-  .setup-container, .quiz-container { background: #FFFFFF; border-radius: 16px; padding: 25px; box-shadow: 0 8px 24px rgba(82, 53, 67, 0.12); width: 100%; max-width: 700px; box-sizing: border-box; }
+  body { font-family: 'Segoe UI', sans-serif; background-color: #FDFBF7; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; box-sizing: border-box; }
+  .setup-container, .quiz-container, .learning-container { background: #FFFFFF; border-radius: 16px; padding: 25px; box-shadow: 0 8px 24px rgba(82, 53, 67, 0.12); width: 100%; max-width: 700px; box-sizing: border-box; }
+  .hidden { display: none !important; }
   .learning-wrapper { text-align: center; margin-top: 10px; }
   .quiz-action-bar { display: flex; gap: 10px; margin-top: 20px; }
   .btn-action { flex: 1; padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
@@ -88,10 +89,10 @@ layoutFixStyle.innerHTML = `
 `;
 document.head.appendChild(layoutFixStyle);
 
-// --- 📱 DOM 생성 (하얀 정보창 박스 아예 삭제 완료) ---
+// --- 📱 DOM 생성 (빈 박스가 생기지 않도록 독립된 .learning-container 클래스 적용) ---
 const learningSection = document.createElement('div');
 learningSection.id = 'learningSection';
-learningSection.className = 'hidden setup-container';
+learningSection.className = 'hidden learning-container';
 learningSection.innerHTML = `
   <h2 style="color:#523543; margin-top:0;">🗺️ 일본 전도 학습 모드</h2>
   <p style="margin-bottom:15px; color:#666;">지도의 각 지역을 클릭하여 선택해 보세요!</p>
