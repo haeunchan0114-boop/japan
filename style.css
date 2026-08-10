@@ -1,1 +1,125 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Pretendard', sans-serif;
+}
 
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f5f7fa;
+}
+
+/* 카드 공통 스타일 */
+.card {
+  background-color: #ffffff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+/* 로그인 스타일 */
+.card h1 {
+  font-size: 1.6rem;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.card p {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 24px;
+}
+
+.input-group {
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.85rem;
+  color: #444;
+  margin-bottom: 6px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input-group input:focus {
+  border-color: #4a90e2;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background-color: #4a90e2;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 8px;
+}
+
+.btn-primary:hover {
+  background-color: #357abd;
+}
+
+/* 퀴즈 스타일 */
+.quiz-header {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.question {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 24px;
+  word-break: keep-all;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.option-btn {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fafafa;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.option-btn:hover {
+  background: #eef5ff;
+  border-color: #4a90e2;
+  color: #4a90e2;
+}
+
+.score-box {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+}
