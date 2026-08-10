@@ -13,7 +13,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// --- 🗺️ 올바른 다각형 좌표를 가진 도도부현 데이터셋 ---
+// --- 🗺️ 도도부현 고해상도 좌표 데이터셋 ---
 const rawDB = [
   { id: 1, ko: "홋카이도", jp: "北海道", region: "홋카이도 지방", specialty: "게, 유제품", spot: "삿포로 오도리 공원", coords: "140.2,41.4 139.8,41.6 139.3,42.0 139.1,42.3 139.5,42.8 140.1,42.7 140.8,42.4 141.5,43.2 140.5,43.6 139.3,44.1 139.8,44.9 140.8,45.4 141.8,45.5 142.8,45.4 145.0,45.3 145.9,45.1 145.2,44.2 145.5,43.7 145.6,43.0 143.8,43.1 142.5,42.4 143.1,41.4 141.8,41.5 140.5,41.4 140.2,41.4" },
   { id: 2, ko: "아오모리현", jp: "青森県", region: "도호쿠 지방", specialty: "사과", spot: "히로사키 성", coords: "139.5,41.0 139.7,41.3 140.0,41.5 140.3,41.2 140.5,41.4 140.8,41.5 141.3,41.4 141.6,41.2 141.5,40.8 141.7,40.5 141.3,40.3 140.8,40.4 140.4,40.3 140.0,40.5 139.8,40.6 139.6,40.8 139.5,41.0" },
@@ -64,7 +64,6 @@ const rawDB = [
   { id: 47, ko: "오키나와현", jp: "沖縄県", region: "오키나와 지방", specialty: "바다포도", spot: "츄라우미", coords: "127.6,26.1 127.8,26.3 128.0,26.6 128.3,26.8 128.1,26.9 127.9,26.6 127.7,26.3 127.6,26.1" }
 ];
 
-// --- 🌐 전체 일본 지도를 하나의 기준 좌표계(전체 경도/위도 범위)로 통일하여 개별 현들을 렌더링하도록 수정 ---
 const GLOBAL_MIN_LNG = 127.0;
 const GLOBAL_MAX_LNG = 146.5;
 const GLOBAL_MIN_LAT = 25.5;
@@ -75,13 +74,12 @@ const PREFECTURE_DB = rawDB.map(p => ({
   geojson: { type: "Polygon", coordinates: [p.coords.split(' ').map(c => c.split(',').map(Number))] }
 }));
 
-// --- 🎨 UI 스타일 적용 ---
+// --- 🎨 스타일 정의 (하얀색 불필요 정보창 레이아웃 제거) ---
 const layoutFixStyle = document.createElement('style');
 layoutFixStyle.innerHTML = `
   body { font-family: 'Segoe UI', sans-serif; background-color: #FDFBF7; margin: 0; padding: 20px; display: flex; justify-content: center; }
   .setup-container, .quiz-container { background: #FFFFFF; border-radius: 16px; padding: 25px; box-shadow: 0 8px 24px rgba(82, 53, 67, 0.12); width: 100%; max-width: 700px; box-sizing: border-box; }
-  .learning-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; margin-top: 15px; }
-  @media (max-width: 650px) { .learning-grid { grid-template-columns: 1fr; } }
+  .learning-wrapper { text-align: center; margin-top: 10px; }
   .quiz-action-bar { display: flex; gap: 10px; margin-top: 20px; }
   .btn-action { flex: 1; padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
   .btn-home { background-color: #E0E0E0; color: #333; }
@@ -90,23 +88,15 @@ layoutFixStyle.innerHTML = `
 `;
 document.head.appendChild(layoutFixStyle);
 
-// --- 📱 DOM 생성 및 화면 세팅 ---
+// --- 📱 DOM 생성 (하얀 정보창 박스 아예 삭제 완료) ---
 const learningSection = document.createElement('div');
 learningSection.id = 'learningSection';
 learningSection.className = 'hidden setup-container';
 learningSection.innerHTML = `
   <h2 style="color:#523543; margin-top:0;">🗺️ 일본 전도 학습 모드</h2>
-  <p style="margin-bottom:15px; color:#666;">지도의 각 지역을 클릭하여 정보를 확인하세요!</p>
-  <div class="learning-grid">
-    <div style="text-align:center;">
-      <canvas id="japanMapCanvas" width="300" height="380" style="background:#FAF3E0; border:2px solid #523543; border-radius:12px; cursor:pointer; width:100%; height:auto; max-width:300px;"></canvas>
-    </div>
-    <div id="learningInfo" style="padding:18px; background:#FFF8F0; border-radius:12px; border:2px solid #85586F; display:none;">
-      <h3 id="learnName" style="margin:0 0 10px 0; color:#85586F; font-size:1.3rem;"></h3>
-      <p style="margin:6px 0;"><strong>📍 지역:</strong> <span id="learnRegion"></span></p>
-      <p style="margin:6px 0;"><strong>🍜 특산물:</strong> <span id="learnSpecialty"></span></p>
-      <p style="margin:6px 0;"><strong>📸 관광지:</strong> <span id="learnSpot"></span></p>
-    </div>
+  <p style="margin-bottom:15px; color:#666;">지도의 각 지역을 클릭하여 선택해 보세요!</p>
+  <div class="learning-wrapper">
+    <canvas id="japanMapCanvas" width="340" height="420" style="background:#FAF3E0; border:2px solid #523543; border-radius:12px; cursor:pointer; width:100%; height:auto; max-width:340px;"></canvas>
   </div>
   <button id="backToSetupFromLearning" class="btn-action btn-home" style="margin-top:20px; width:100%;">🏠 메인으로 돌아가기</button>
 `;
@@ -151,12 +141,10 @@ if (startBtn) {
 document.getElementById('backToSetupFromLearning').onclick = () => show('setup');
 onAuthStateChanged(auth, (user) => { if (user) show('setup'); else show('login'); });
 
-// --- 🌐 전체 공통 좌표 투영 계산식 (지도가 찌그러지지 않도록 고정 비율 적용) ---
+// --- 🌐 좌표 투영 계산식 ---
 function projectCoords(lng, lat, width, height, padding = 20) {
-  const minLng = GLOBAL_MIN_LNG;
-  const maxLng = GLOBAL_MAX_LNG;
-  const minLat = GLOBAL_MIN_LAT;
-  const maxLat = GLOBAL_MAX_LAT;
+  const minLng = GLOBAL_MIN_LNG, maxLng = GLOBAL_MAX_LNG;
+  const minLat = GLOBAL_MIN_LAT, maxLat = GLOBAL_MAX_LAT;
 
   const avgLatRad = ((minLat + maxLat) / 2) * (Math.PI / 180);
   const cosLat = Math.cos(avgLatRad);
@@ -166,7 +154,6 @@ function projectCoords(lng, lat, width, height, padding = 20) {
 
   const drawW = width - padding * 2;
   const drawH = height - padding * 2;
-
   const scale = Math.min(drawW / mapWidthLng, drawH / mapHeightLat);
 
   const offsetX = padding + (drawW - mapWidthLng * scale) / 2;
@@ -178,7 +165,7 @@ function projectCoords(lng, lat, width, height, padding = 20) {
   return [x, y];
 }
 
-// --- 🗺️ 전체 일본 지도 그리기 ---
+// --- 🗺️ 일본 지도 렌더링 (클릭 시 알림창으로 지역 정보 안내) ---
 let mapPaths = [];
 function drawJapanMap() {
   const canvas = document.getElementById('japanMapCanvas');
@@ -217,19 +204,14 @@ function drawJapanMap() {
         ctx.fill(item.path);
         ctx.stroke(item.path);
 
-        const info = document.getElementById('learningInfo');
-        info.style.display = 'block';
-        document.getElementById('learnName').textContent = `${item.pref.ko} (${item.pref.jp})`;
-        document.getElementById('learnRegion').textContent = item.pref.region;
-        document.getElementById('learnSpecialty').textContent = item.pref.specialty;
-        document.getElementById('learnSpot').textContent = item.pref.spot;
+        alert(`[${item.pref.ko} (${item.pref.jp})] \n• 지역: ${item.pref.region}\n• 특산물: ${item.pref.specialty}\n• 관광지: ${item.pref.spot}`);
         break;
       }
     }
   };
 }
 
-// --- 🎯 개별 퀴즈 지도 렌더링 (해당 현의 영역에 맞게 확대 표시) ---
+// --- 🎯 개별 퀴즈 지도 렌더링 ---
 function renderGeoJsonPolygon(canvas, geojson) {
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -242,7 +224,6 @@ function renderGeoJsonPolygon(canvas, geojson) {
     if (lat < minLat) minLat = lat; if (lat > maxLat) maxLat = lat;
   });
 
-  // 개별 퀴즈 화면에서는 해당 현의 바운딩 박스 기준으로 맞춤 투영
   function projectLocal(lng, lat) {
     const avgLatRad = ((minLat + maxLat) / 2) * (Math.PI / 180);
     const cosLat = Math.cos(avgLatRad);
@@ -274,7 +255,7 @@ function renderGeoJsonPolygon(canvas, geojson) {
   ctx.stroke();
 }
 
-// --- 🎮 퀴즈 제어 (홈, 스킵, 정답률) ---
+// --- 🎮 퀴즈 제어 로직 ---
 let state = { questions: [], idx: 0, lang: 'ko_ko', correctCount: 0 };
 
 document.getElementById('startQuizBtn').onclick = () => {
