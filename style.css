@@ -19,6 +19,7 @@ body {
   background: var(--bg-gradient);
   min-height: 100vh;
   display: flex;
+  flex-direction: column; /* 수정: 카드가 가로로 나열되지 않고 세로로 정렬되도록 설정 */
   justify-content: center;
   align-items: center;
   padding: 1.5rem;
