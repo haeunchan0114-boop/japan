@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCSUDQw6FZKxE3xp2E6YsTDgSSB3P3Pbx0",
@@ -13,7 +13,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// --- 🗺️ 도도부현 고해상도 좌표 데이터셋 ---
 const rawDB = [
   { id: 1, ko: "홋카이도", jp: "北海道", region: "홋카이도 지방", specialty: "게, 유제품", spot: "삿포로 오도리 공원", coords: "140.2,41.4 139.8,41.6 139.3,42.0 139.1,42.3 139.5,42.8 140.1,42.7 140.8,42.4 141.5,43.2 140.5,43.6 139.3,44.1 139.8,44.9 140.8,45.4 141.8,45.5 142.8,45.4 145.0,45.3 145.9,45.1 145.2,44.2 145.5,43.7 145.6,43.0 143.8,43.1 142.5,42.4 143.1,41.4 141.8,41.5 140.5,41.4 140.2,41.4" },
   { id: 2, ko: "아오모리현", jp: "青森県", region: "도호쿠 지방", specialty: "사과", spot: "히로사키 성", coords: "139.5,41.0 139.7,41.3 140.0,41.5 140.3,41.2 140.5,41.4 140.8,41.5 141.3,41.4 141.6,41.2 141.5,40.8 141.7,40.5 141.3,40.3 140.8,40.4 140.4,40.3 140.0,40.5 139.8,40.6 139.6,40.8 139.5,41.0" },
@@ -74,47 +73,46 @@ const PREFECTURE_DB = rawDB.map(p => ({
   geojson: { type: "Polygon", coordinates: [p.coords.split(' ').map(c => c.split(',').map(Number))] }
 }));
 
-// --- 🎨 스타일 정의 (왼쪽 빈 네모 박스 원인인 flex/container 구조 및 레이아웃 오류 완전 수정) ---
-const layoutFixStyle = document.createElement('style');
-layoutFixStyle.innerHTML = `
-  body { font-family: 'Segoe UI', sans-serif; background-color: #FDFBF7; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; box-sizing: border-box; }
-  .setup-container, .quiz-container, .learning-container { background: #FFFFFF; border-radius: 16px; padding: 25px; box-shadow: 0 8px 24px rgba(82, 53, 67, 0.12); width: 100%; max-width: 700px; box-sizing: border-box; }
-  .hidden { display: none !important; }
-  .learning-wrapper { text-align: center; margin-top: 10px; }
-  .quiz-action-bar { display: flex; gap: 10px; margin-top: 20px; }
-  .btn-action { flex: 1; padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
-  .btn-home { background-color: #E0E0E0; color: #333; }
-  .btn-skip { background-color: #85586F; color: #FFF; }
-  .result-card { text-align: center; padding: 20px; background: #FFF8F0; border-radius: 12px; border: 2px solid #85586F; margin-top: 15px; }
-`;
-document.head.appendChild(layoutFixStyle);
+function show(name) {
+  const sectionIds = ['loadingSection', 'loginSection', 'signupSection', 'setupSection', 'quizSection', 'learningSection'];
+  sectionIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('hidden');
+  });
+  const target = document.getElementById(name + 'Section');
+  if (target) {
+    target.classList.remove('hidden');
+  }
+}
 
-// --- 📱 DOM 생성 (빈 박스가 생기지 않도록 독립된 .learning-container 클래스 적용) ---
-const learningSection = document.createElement('div');
-learningSection.id = 'learningSection';
-learningSection.className = 'hidden learning-container';
-learningSection.innerHTML = `
-  <h2 style="color:#523543; margin-top:0;">🗺️ 일본 전도 학습 모드</h2>
-  <p style="margin-bottom:15px; color:#666;">지도의 각 지역을 클릭하여 선택해 보세요!</p>
-  <div class="learning-wrapper">
-    <canvas id="japanMapCanvas" width="340" height="420" style="background:#FAF3E0; border:2px solid #523543; border-radius:12px; cursor:pointer; width:100%; height:auto; max-width:340px;"></canvas>
-  </div>
-  <button id="backToSetupFromLearning" class="btn-action btn-home" style="margin-top:20px; width:100%;">🏠 메인으로 돌아가기</button>
-`;
-document.body.appendChild(learningSection);
-
-const ui = {
-  loading: document.getElementById('loadingSection'),
-  login: document.getElementById('loginSection'),
-  signup: document.getElementById('signupSection'),
-  setup: document.getElementById('setupSection'),
-  quiz: document.getElementById('quizSection'),
-  learning: document.getElementById('learningSection')
+document.getElementById('loginBtn').onclick = async () => {
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (e) {
+    alert('로그인 실패: ' + e.message);
+  }
 };
 
-function show(name) { Object.values(ui).forEach(div => div?.classList.add('hidden')); ui[name]?.classList.remove('hidden'); }
+document.getElementById('signupBtn').onclick = async () => {
+  const email = document.getElementById('signupEmail').value;
+  const password = document.getElementById('signupPassword').value;
+  try {
+    await createUserWithEmailAndPassword(auth, email, password);
+    alert('회원가입 성공!');
+  } catch (e) {
+    alert('회원가입 실패: ' + e.message);
+  }
+};
 
-// --- 🔄 버튼 순서 강제 재배치 ([시작하기] -> [일본 전도 학습하기] -> [로그아웃]) ---
+document.getElementById('logoutBtn').onclick = async () => {
+  await signOut(auth);
+};
+
+document.getElementById('goToSignup').onclick = () => show('signup');
+document.getElementById('goToLogin').onclick = () => show('login');
+
 const startBtn = document.getElementById('startQuizBtn');
 const logoutBtn = document.getElementById('logoutBtn');
 
@@ -142,7 +140,6 @@ if (startBtn) {
 document.getElementById('backToSetupFromLearning').onclick = () => show('setup');
 onAuthStateChanged(auth, (user) => { if (user) show('setup'); else show('login'); });
 
-// --- 🌐 좌표 투영 계산식 ---
 function projectCoords(lng, lat, width, height, padding = 20) {
   const minLng = GLOBAL_MIN_LNG, maxLng = GLOBAL_MAX_LNG;
   const minLat = GLOBAL_MIN_LAT, maxLat = GLOBAL_MAX_LAT;
@@ -166,7 +163,6 @@ function projectCoords(lng, lat, width, height, padding = 20) {
   return [x, y];
 }
 
-// --- 🗺️ 일본 지도 렌더링 (클릭 시 알림창으로 지역 정보 안내) ---
 let mapPaths = [];
 function drawJapanMap() {
   const canvas = document.getElementById('japanMapCanvas');
@@ -212,7 +208,6 @@ function drawJapanMap() {
   };
 }
 
-// --- 🎯 개별 퀴즈 지도 렌더링 ---
 function renderGeoJsonPolygon(canvas, geojson) {
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -256,7 +251,6 @@ function renderGeoJsonPolygon(canvas, geojson) {
   ctx.stroke();
 }
 
-// --- 🎮 퀴즈 제어 로직 ---
 let state = { questions: [], idx: 0, lang: 'ko_ko', correctCount: 0 };
 
 document.getElementById('startQuizBtn').onclick = () => {
