@@ -1,24 +1,94 @@
-// --- 1. 로그인 로직 ---
-const loginForm = document.getElementById('loginForm');
+// Firebase SDK 라이브러리 불러오기 (v10 기준)
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { 
+  getAuth, 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+// 복사해오신 Firebase 설정 적용 완료!
+const firebaseConfig = {
+  apiKey: "AIzaSyCSUDQw6FZKxE3xp2E6YsTDgSSB3P3Pbx0",
+  authDomain: "japan-77f1a.firebaseapp.com",
+  projectId: "japan-77f1a",
+  storageBucket: "japan-77f1a.firebasestorage.app",
+  messagingSenderId: "645381397732",
+  appId: "1:645381397732:web:440834484cbd55051aa0f1"
+};
+
+// Firebase 초기화
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// DOM 요소 가져오기
 const loginSection = document.getElementById('loginSection');
+const signupSection = document.getElementById('signupSection');
 const quizSection = document.getElementById('quizSection');
 
-loginForm.addEventListener('submit', function(event) {
-  event.preventDefault();
-  
-  const username = document.getElementById('username').value;
-  alert(`${username}님, 환영합니다! 퀴즈를 시작합니다.`);
-  
-  // 로그인 화면 숨기고 퀴즈 화면 보여주기
+const loginForm = document.getElementById('loginForm');
+const signupForm = document.getElementById('signupForm');
+
+const toSignup = document.getElementById('toSignup');
+const toLogin = document.getElementById('toLogin');
+
+// 1. 로그인 <-> 회원가입 화면 전환
+toSignup.addEventListener('click', (e) => {
+  e.preventDefault();
   loginSection.classList.add('hidden');
-  quizSection.classList.remove('hidden');
-  
-  // 첫 문제 로드
-  loadQuiz();
+  signupSection.classList.remove('hidden');
 });
 
+toLogin.addEventListener('click', (e) => {
+  e.preventDefault();
+  signupSection.classList.add('hidden');
+  loginSection.classList.remove('hidden');
+});
 
-// --- 2. 퀴즈 데이터 및 로직 ---
+// 2. 회원가입 처리 (Firebase Authentication)
+signupForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('signupEmail').value;
+  const password = document.getElementById('signupPassword').value;
+
+  try {
+    await createUserWithEmailAndPassword(auth, email, password);
+    alert('회원가입 완료! 퀴즈를 시작합니다.');
+    startQuiz();
+  } catch (error) {
+    if (error.code === 'auth/email-already-in-use') {
+      alert('이미 사용 중인 이메일입니다.');
+    } else if (error.code === 'auth/weak-password') {
+      alert('비밀번호는 최소 6자 이상이어야 합니다.');
+    } else {
+      alert('회원가입 실패: ' + error.message);
+    }
+  }
+});
+
+// 3. 로그인 처리 (Firebase Authentication)
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    alert('로그인 성공!');
+    startQuiz();
+  } catch (error) {
+    alert('로그인 실패: 이메일 또는 비밀번호를 확인해주세요.');
+  }
+});
+
+// 4. 퀴즈 실행 함수
+function startQuiz() {
+  loginSection.classList.add('hidden');
+  signupSection.classList.add('hidden');
+  quizSection.classList.remove('hidden');
+  loadQuiz();
+}
+
+// --- 5. 퀴즈 데이터 및 로직 ---
 const quizData = [
   {
     question: "일본의 수도가 위치한 도도부현은 어디일까요?",
