@@ -1,11 +1,11 @@
 :root {
-  --primary: #4338ca;
-  --primary-hover: #3730a3;
-  --bg-gradient: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
-  --card-bg: #ffffff;
-  --text-main: #1e293b;
-  --text-sub: #64748b;
-  --border-color: #e2e8f0;
+  --primary: #85586F;
+  --primary-hover: #634152;
+  --bg-gradient: linear-gradient(135deg, #FDF6EC 0%, #F5EBE6 100%);
+  --card-bg: #FFFFFF;
+  --text-main: #4A403A;
+  --text-sub: #8C827B;
+  --border-color: #E3D5C9;
 }
 
 * {
@@ -30,8 +30,9 @@ body {
   max-width: 440px;
   padding: 2rem;
   border-radius: 20px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 20px 25px -5px rgba(133, 88, 111, 0.08), 0 10px 10px -5px rgba(133, 88, 111, 0.03);
   text-align: center;
+  border: 1px solid #F0E6DD;
 }
 
 h1 {
@@ -70,11 +71,14 @@ p {
   border-radius: 10px;
   font-size: 0.95rem;
   outline: none;
+  background-color: #FAFAF7;
+  color: var(--text-main);
   transition: border-color 0.2s;
 }
 
 .input-group input:focus, .setup-group select:focus {
   border-color: var(--primary);
+  background-color: #FFFFFF;
 }
 
 .btn-primary {
@@ -100,7 +104,7 @@ p {
 
 /* 퀴즈 내 실루엣 그래픽 컨테이너 스타일 */
 .silhouette-container {
-  background: radial-gradient(circle, #f8fafc 0%, #f1f5f9 100%);
+  background: radial-gradient(circle, #FAF6F0 0%, #F0E8E1 100%);
   border: 2px solid var(--border-color);
   border-radius: 16px;
   padding: 15px;
@@ -108,18 +112,18 @@ p {
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
 }
 
 #shapeCanvas {
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.08));
+  filter: drop-shadow(0 4px 6px rgba(74, 64, 58, 0.08));
 }
 
 /* 힌트 및 서브 버튼 레이아웃 */
 .hint-box {
-  background: #f8fafc !important;
-  border: 1px dashed #cbd5e1 !important;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  background: #FAF6F0 !important;
+  border: 1px dashed var(--border-color) !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.01);
 }
 
 /* 보기(옵션) 버튼 스타일 */
@@ -131,7 +135,7 @@ p {
 
 .btn-option {
   width: 100%;
-  background: #ffffff;
+  background: #FFFFFF;
   color: var(--text-main);
   border: 1.5px solid var(--border-color);
   padding: 0.75rem;
@@ -143,7 +147,7 @@ p {
 }
 
 .btn-option:hover {
-  background: #f8fafc;
+  background: #FDF6EC;
   border-color: var(--primary);
   color: var(--primary);
   transform: translateY(-1px);
