@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>일본 도도부현 마스터 - 로그인</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Pretendard', sans-serif;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #f5f7fa;
+    }
+
+    .login-card {
+      background-color: #ffffff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+    }
+
+    .login-card h1 {
+      font-size: 1.5rem;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .login-card p {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 24px;
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: #444;
+      margin-bottom: 6px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-group input:focus {
+      border-color: #4a90e2;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 12px;
+      background-color: #4a90e2;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-top: 8px;
+    }
+
+    .btn-login:hover {
+      background-color: #357abd;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-card">
+    <h1>🗾 도도부현 마스터</h1>
+    <p>로그인하고 학습 기록을 저장해보세요!</p>
+
+    <form id="loginForm">
+      <div class="input-group">
+        <label for="username">아이디</label>
+        <input type="text" id="username" placeholder="아이디를 입력하세요" required>
+      </div>
+
+      <div class="input-group">
+        <label for="password">비밀번호</label>
+        <input type="password" id="password" placeholder="비밀번호를 입력하세요" required>
+      </div>
+
+      <button type="submit" class="btn-login">로그인</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function(event) {
+      event.preventDefault(); // 폼 기본 제출 동작 방지
+      
+      const username = document.getElementById('username').value;
+      
+      // 테스트용 로그인 알림
+      alert(`${username}님, 환영합니다!`);
+      
+      // 로그인 성공 후 도도부현 퀴즈/학습 페이지로 이동시키는 로직을 여기에 작성하면 됩니다.
+      // window.location.href = "quiz.html";
+    });
+  </script>
+
+</body>
+</html>
