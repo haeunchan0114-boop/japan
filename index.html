@@ -12,7 +12,7 @@
     <div id="loginSection">
       <h1>🗾 japan quiz</h1>
       <p style="font-size: 0.85rem; color: #555; margin-bottom: 20px;">
-        일본 도도부현 지도 학습 퀴즈 서비스
+        일본 도도부현 실루엣 퀴즈 서비스
       </p>
 
       <form id="loginForm">
@@ -58,12 +58,11 @@
     <div id="quizSection" class="hidden">
       <div class="quiz-header">문제 <span id="currentNum">1</span> / <span id="totalNum">3</span></div>
       
-      <div id="mapCard" style="background: #f0f4f8; padding: 25px; text-align: center; border-radius: 10px; margin: 15px 0; border: 2px dashed #cbd5e1;">
-        <span style="font-size: 2rem;" id="mapEmoji">📍</span>
-        <h3 id="regionHint" style="margin-top: 10px; color: #1e293b;">지역 힌트</h3>
+      <div style="text-align: center; background: #f8fafc; border-radius: 12px; padding: 15px; margin: 15px 0; border: 1px solid #e2e8f0;">
+        <canvas id="shapeCanvas" width="200" height="160" style="background: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);"></canvas>
       </div>
 
-      <div class="question" id="questionText">표시된 지역은 어디일까요?</div>
+      <div class="question" id="questionText">이 모양의 도도부현은 어디일까요?</div>
       
       <div class="options" id="optionsContainer"></div>
     </div>
