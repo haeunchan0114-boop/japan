@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Japan Quiz 3.0</title>
+  <title>Japan Quiz 3.1</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -63,12 +63,14 @@
         <canvas id="shapeCanvas" width="240" height="200"></canvas>
       </div>
 
-      <div class="hint-box" style="background: #f8f9fa; padding: 10px; border-radius: 8px; margin-bottom: 1rem; text-align: left; font-size: 0.85rem;">
-        <div id="hint1" style="color: #636e72; margin-bottom: 4px;">📍 1단계 힌트 (지방): -</div>
-        <div id="hint2" style="color: #636e72; margin-bottom: 4px; display:none;">✨ 2단계 힌트 (특산물): -</div>
-        <div id="hint3" style="color: #636e72; display:none;">🏙️ 3단계 힌트 (유명 도시/장소): -</div>
+      <div class="hint-box" style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin-bottom: 1rem; text-align: left; font-size: 0.85rem; border: 1px dashed #cbd5e1;">
+        <div id="hint1" style="color: #475569; margin-bottom: 6px; display:none;">📍 <b>1단계 힌트 (지방):</b> <span id="hintText1"></span></div>
+        <div id="hint2" style="color: #475569; margin-bottom: 6px; display:none;">✨ <b>2단계 힌트 (특산물):</b> <span id="hintText2"></span></div>
+        <div id="hint3" style="color: #475569; display:none;">🏙️ <b>3단계 힌트 (유명 장소):</b> <span id="hintText3"></span></div>
+        <div id="noHintMsg" style="color: #94a3b8; text-align: center; font-style: italic;">버튼을 눌러 힌트를 확인하세요!</div>
       </div>
-      <button id="nextHintBtn" style="background:#e2e8f0; border:none; padding:5px 10px; border-radius:5px; font-size:0.75rem; cursor:pointer; margin-bottom:1rem;">💡 힌트 더 보기</button>
+      
+      <button id="nextHintBtn" style="background:#e2e8f0; color:#334155; border:none; padding:8px 12px; border-radius:6px; font-size:0.8rem; font-weight:600; cursor:pointer; margin-bottom:1.2rem; width:100%;">💡 힌트 보기 (클릭)</button>
 
       <div id="questionText" style="font-weight:700; margin-bottom:1rem;">이곳은 어디일까요?</div>
       <div id="optionsContainer"></div>
