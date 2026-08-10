@@ -1,16 +1,18 @@
+// 1. 필요한 Firebase SDK 모듈 불러오기 (v10 버전 표준 방식)
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-// Firebase 설정 (본인의 파이어베이스 설정값 유지)
+// 2. 제공해주신 정확한 파이어베이스 설정값 적용
 const firebaseConfig = {
-  apiKey: "실제_본인_API_키",
+  apiKey: "AIzaSyCSUDQw6FZKxE3xp2E6YsTDgSSB3P3Pbx0",
   authDomain: "japan-77f1a.firebaseapp.com",
   projectId: "japan-77f1a",
-  storageBucket: "japan-77f1a.appspot.com",
-  messagingSenderId: "본인_ID",
-  appId: "본인_AppID"
+  storageBucket: "japan-77f1a.firebasestorage.app",
+  messagingSenderId: "645381397732",
+  appId: "1:645381397732:web:440834484cbd55051aa0f1"
 };
 
+// 3. Firebase 및 Auth 초기화
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
@@ -25,7 +27,7 @@ const toLogin = document.getElementById('toLogin');
 const loginForm = document.getElementById('loginForm');
 const signupForm = document.getElementById('signupForm');
 
-// 화면 전환 이벤트
+// 화면 전환 이벤트 (회원가입/로그인 창 오가기)
 toSignup.addEventListener('click', (e) => {
   e.preventDefault();
   loginSection.classList.add('hidden');
@@ -38,12 +40,12 @@ toLogin.addEventListener('click', (e) => {
   loginSection.classList.remove('hidden');
 });
 
-// 회원가입 처리 (Firebase Auth는 이메일 형식을 요구하므로 가상의 도메인 결합)
+// 회원가입 처리
 signupForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const id = document.getElementById('signupId').value.trim();
   const password = document.getElementById('signupPassword').value;
-  const email = `${id}@japanquiz.com`; // 가상 이메일 생성
+  const email = `${id}@japanquiz.com`; // Firebase 이메일 규칙 대응을 위한 가상 주소 생성
 
   try {
     await createUserWithEmailAndPassword(auth, email, password);
@@ -55,7 +57,7 @@ signupForm.addEventListener('submit', async (e) => {
   }
 });
 
-// 일반 로그인 처리
+// 로그인 처리
 loginForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const id = document.getElementById('loginId').value.trim();
@@ -76,11 +78,10 @@ function startQuiz() {
   loginSection.classList.add('hidden');
   signupSection.classList.add('hidden');
   quizSection.classList.remove('hidden');
-  
   loadQuestion();
 }
 
-// 간단한 퀴즈 예시 데이터 및 로직
+// 퀴즈 데이터 및 로직
 const quizData = [
   { question: "도쿄가 위치한 일본의 전통 지역 구분은?", options: ["간토", "간사이", "규슈", "도호쿠"], answer: 0 },
   { question: "오사카와 교토가 속해 있는 지역은?", options: ["홋카이도", "간사이", "시코쿠", "주고쿠"], answer: 1 },
