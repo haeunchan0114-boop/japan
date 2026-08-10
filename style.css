@@ -1,183 +1,102 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Pretendard', sans-serif;
+:root {
+  --primary: #4834d4;
+  --primary-dark: #3022a2;
+  --bg: #f0f2f5;
+  --card-bg: #ffffff;
+  --text: #2d3436;
+  --error: #eb4d4b;
+  --success: #6ab04c;
 }
 
 body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Pretendard', -apple-system, sans-serif;
+  background-color: var(--bg);
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #f5f7fa;
 }
 
 .card {
-  background-color: #ffffff;
-  padding: 40px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  width: 100%;
+  background: var(--card-bg);
+  width: 90%;
   max-width: 400px;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
   text-align: center;
 }
 
-.hidden {
-  display: none;
-}
+h1 { font-size: 1.8rem; margin-bottom: 0.5rem; color: var(--text); }
+p { color: #636e72; font-size: 0.9rem; margin-bottom: 2rem; }
 
-.card h1 {
-  font-size: 1.6rem;
-  color: #333;
-  margin-bottom: 8px;
-}
-
-.card p {
-  font-size: 0.9rem;
-  color: #666;
-  margin-bottom: 24px;
-}
-
-/* 구글 로그인 버튼 스타일 */
-.btn-google {
+.input-group { text-align: left; margin-bottom: 1rem; }
+.input-group label { display: block; font-size: 0.85rem; margin-bottom: 0.4rem; font-weight: 600; }
+input {
   width: 100%;
-  padding: 10px 12px;
-  background-color: #ffffff;
-  border: 1px solid #dadce0;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  font-weight: bold;
-  color: #3c4043;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: background-color 0.2s;
+  padding: 0.8rem;
+  border: 1px solid #dfe6e9;
+  border-radius: 10px;
+  box-sizing: border-box;
+  font-size: 1rem;
+  transition: border-color 0.3s;
 }
-
-.btn-google:hover {
-  background-color: #f8f9fa;
-}
-
-.btn-google img {
-  width: 18px;
-  height: 18px;
-}
-
-/* 구분선 스타일 */
-.divider {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  margin: 20px 0;
-  color: #888;
-  font-size: 0.8rem;
-}
-
-.divider::before,
-.divider::after {
-  content: '';
-  flex: 1;
-  border-bottom: 1px solid #eee;
-}
-
-.divider span {
-  padding: 0 10px;
-}
-
-.input-group {
-  margin-bottom: 16px;
-  text-align: left;
-}
-
-.input-group label {
-  display: block;
-  font-size: 0.85rem;
-  color: #444;
-  margin-bottom: 6px;
-}
-
-.input-group input {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  outline: none;
-}
-
-.input-group input:focus {
-  border-color: #4a90e2;
-}
+input:focus { outline: none; border-color: var(--primary); }
 
 .btn-primary {
   width: 100%;
-  padding: 12px;
-  background-color: #4a90e2;
-  color: #ffffff;
+  padding: 0.9rem;
+  background: var(--primary);
+  color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 12px;
   font-size: 1rem;
-  font-weight: bold;
+  font-weight: 700;
   cursor: pointer;
-  margin-top: 8px;
+  transition: background 0.3s, transform 0.1s;
 }
+.btn-primary:hover { background: var(--primary-dark); }
+.btn-primary:active { transform: scale(0.98); }
 
-.btn-primary:hover {
-  background-color: #357abd;
+.btn-option {
+  width: 100%;
+  padding: 0.8rem;
+  margin-bottom: 0.6rem;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
 }
+.btn-option:hover { background: #e9ecef; border-color: #adb5bd; }
 
-.toggle-text {
-  margin-top: 16px;
-  font-size: 0.85rem !important;
-}
-
-.toggle-text a {
-  color: #4a90e2;
+.logout-link {
+  display: inline-block;
+  margin-top: 1.5rem;
+  color: var(--error);
+  font-size: 0.85rem;
   text-decoration: none;
-  font-weight: bold;
-}
-
-/* 퀴즈 스타일 */
-.quiz-header {
-  font-size: 0.9rem;
-  color: #666;
-  margin-bottom: 12px;
-}
-
-.question {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 24px;
-  word-break: keep-all;
-}
-
-.options {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.option-btn {
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  background: #fafafa;
-  font-size: 1rem;
   cursor: pointer;
 }
 
-.option-btn:hover {
-  background: #eef5ff;
-  border-color: #4a90e2;
-  color: #4a90e2;
-}
+.hidden { display: none !important; }
 
-.score-box {
-  font-size: 1.1rem;
-  font-weight: bold;
-  color: #333;
+.silhouette-container {
+  background: #f1f2f6;
+  border-radius: 15px;
+  margin: 1.5rem 0;
+  padding: 10px;
+}
+canvas { max-width: 100%; height: auto; }
+
+.setup-group select {
+  width: 100%;
+  padding: 0.8rem;
+  border-radius: 10px;
+  border: 1px solid #dfe6e9;
+  background: white;
+  font-size: 0.95rem;
 }
