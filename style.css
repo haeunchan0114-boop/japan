@@ -1,87 +1,198 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>일본 도도부현 학습 및 퀴즈</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+:root {
+  --primary: #85586F;
+  --primary-hover: #634152;
+  --bg-gradient: linear-gradient(135deg, #FDF6EC 0%, #F5EBE6 100%);
+  --card-bg: #FFFFFF;
+  --text-main: #4A403A;
+  --text-sub: #8C827B;
+  --border-color: #E3D5C9;
+}
 
-    <div id="loadingSection" class="card">
-        <h1>로딩중...</h1>
-    </div>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+}
 
-    <div id="loginSection" class="card hidden">
-        <h1>로그인</h1>
-        <p>일본 전도 학습 및 퀴즈 서비스에 오신 것을 환영합니다.</p>
-        <div class="input-group">
-            <label>이메일</label>
-            <input type="email" id="loginEmail" placeholder="email@example.com">
-        </div>
-        <div class="input-group">
-            <label>비밀번호</label>
-            <input type="password" id="loginPassword" placeholder="비밀번호 입력">
-        </div>
-        <button id="loginBtn" class="btn-primary" style="margin-top: 10px;">로그인</button>
-        <div class="logout-link" id="goToSignup">계정이 없으신가요? 회원가입</div>
-    </div>
+body {
+  background: var(--bg-gradient);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+}
 
-    <div id="signupSection" class="card hidden">
-        <h1>회원가입</h1>
-        <p>새로운 계정을 만들어보세요.</p>
-        <div class="input-group">
-            <label>이메일</label>
-            <input type="email" id="signupEmail" placeholder="email@example.com">
-        </div>
-        <div class="input-group">
-            <label>비밀번호</label>
-            <input type="password" id="signupPassword" placeholder="비밀번호 입력">
-        </div>
-        <button id="signupBtn" class="btn-primary" style="margin-top: 10px;">회원가입</button>
-        <div class="logout-link" id="goToLogin">이미 계정이 있으신가요? 로그인</div>
-    </div>
+.card, .setup-container, .quiz-container {
+  background: var(--card-bg);
+  width: 100%;
+  max-width: 440px;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 20px 25px -5px rgba(133, 88, 111, 0.08), 0 10px 10px -5px rgba(133, 88, 111, 0.03);
+  text-align: center;
+  border: 1px solid #F0E6DD;
+  box-sizing: border-box;
+}
 
-    <div id="setupSection" class="card hidden">
-        <h1>일본 지리 학습</h1>
-        <p>학습 모드 또는 퀴즈를 선택하세요.</p>
-        <div class="input-group setup-group">
-            <label>언어 모드</label>
-            <select id="langMode">
-                <option value="ko_ko">한국어 (이름)</option>
-                <option value="jp_jp">일본어 (이름)</option>
-            </select>
-        </div>
-        <div class="input-group setup-group">
-            <label>문제 수</label>
-            <select id="questionCount">
-                <option value="10">10문항</option>
-                <option value="20">20문항</option>
-                <option value="47">전체 47문항</option>
-            </select>
-        </div>
-        <button id="startQuizBtn" class="btn-primary" style="margin-top: 10px;">퀴즈 시작하기</button>
-        <button id="logoutBtn" class="btn-primary" style="background:#E0E0E0; color:#333; margin-top:10px; display:block;">로그아웃</button>
-    </div>
+h1 {
+  font-size: 1.75rem;
+  color: var(--text-main);
+  margin-bottom: 0.5rem;
+}
 
-    <div id="quizSection" class="card hidden">
-        <h1>일본 도도부현 퀴즈</h1>
-        <p><span id="currentNum">1</span> / <span id="totalNum">10</span></p>
-        <div class="silhouette-container">
-            <canvas id="shapeCanvas" width="280" height="280"></canvas>
-        </div>
-        <h2 id="questionText" style="font-size:1.1rem; color:var(--text-main); margin-bottom:1rem;">이곳은 어디일까요?</h2>
-        <div id="optionsContainer"></div>
-    </div>
+p {
+  color: var(--text-sub);
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
 
-    <div id="learningSection" class="card hidden">
-        <h2 style="color:#523543; margin-top:0;">🗺️ 일본 전도 학습 모드</h2>
-        <p style="margin-bottom:15px; color:#666;">지도의 각 지역을 클릭하여 선택해 보세요!</p>
-        <div class="learning-wrapper">
-            <canvas id="japanMapCanvas" width="340" height="420" style="background:#FAF3E0; border:2px solid #523543; border-radius:12px; cursor:pointer; width:100%; height:auto; max-width:340px;"></canvas>
-        </div>
-        <button id="backToSetupFromLearning" class="btn-action btn-home" style="margin-top:20px; width:100%;">🏠 메인으로 돌아가기</button>
-    </div>
+.hidden {
+  display: none !important;
+}
 
-    <script type="module" src="app.js"></script>
-</body>
-</html>
+.input-group {
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 0.3rem;
+}
+
+.input-group input, .setup-group select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  outline: none;
+  background-color: #FAFAF7;
+  color: var(--text-main);
+  transition: border-color 0.2s;
+}
+
+.input-group input:focus, .setup-group select:focus {
+  border-color: var(--primary);
+  background-color: #FFFFFF;
+}
+
+.btn-primary {
+  width: 100%;
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.8rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.silhouette-container {
+  background: radial-gradient(circle, #FAF6F0 0%, #F0E8E1 100%);
+  border: 2px solid var(--border-color);
+  border-radius: 16px;
+  padding: 15px;
+  margin: 1rem 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+}
+
+#shapeCanvas {
+  filter: drop-shadow(0 4px 6px rgba(74, 64, 58, 0.08));
+}
+
+#optionsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.btn-option {
+  width: 100%;
+  background: #FFFFFF;
+  color: var(--text-main);
+  border: 1.5px solid var(--border-color);
+  padding: 0.75rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-option:hover {
+  background: #FDF6EC;
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.logout-link {
+  margin-top: 1.5rem;
+  color: var(--text-sub);
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.logout-link:hover {
+  color: var(--text-main);
+}
+
+.learning-wrapper {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.quiz-action-bar {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-action {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-home {
+  background-color: #E0E0E0;
+  color: #333;
+}
+
+.btn-skip {
+  background-color: #85586F;
+  color: #FFF;
+}
+
+.result-card {
+  text-align: center;
+  padding: 20px;
+  background: #FFF8F0;
+  border-radius: 12px;
+  border: 2px solid #85586F;
+  margin-top: 15px;
+}
